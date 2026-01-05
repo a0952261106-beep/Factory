@@ -6,23 +6,27 @@
     <title>工廠現場系統</title>
     <style>
         :root { --primary: #0056b3; --success: #28a745; --bg: #f4f6f8; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; touch-action: manipulation; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: var(--bg); margin: 0; padding-bottom: 80px; 
+            touch-action: manipulation; /* 優化觸控 */
+        }
         
-        /* 頁面切換與卡片 */
+        /* 頁面切換機制 */
         .page { display: none; padding: 10px; }
         .page.active { display: block; }
+        
+        /* 卡片設計 */
         .card { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .header { background: var(--primary); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold;}
         
-        /* 輸入框通用 */
+        /* 輸入框樣式 */
         .label { font-size: 13px; color: #666; display: block; margin-bottom: 5px; }
         .input-field { width: 100%; padding: 12px; font-size: 18px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-weight: bold; background: #fff;}
         .input-field:focus { border-color: var(--primary); outline: 2px solid #d1e7dd; }
-        
-        /* 網格佈局 */
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        /* 大數字操作區 */
+        /* 大按鈕與數字區 */
         .qty-input { width: 100%; font-size: 56px; font-weight: 800; color: var(--primary); text-align: center; border: none; background: transparent; margin: 10px 0; }
         .btn-group { display: flex; gap: 10px; }
         .btn-op { flex: 1; padding: 15px; border: none; border-radius: 8px; font-size: 22px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #fff; }
@@ -30,7 +34,7 @@
         .btn-plus { background: #198754; }
         .btn-plus-10 { background: #0d6efd; }
 
-        /* 底部導覽 */
+        /* 底部導覽列 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; height: 65px; z-index: 100; }
         .nav-item { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 12px; color: #999; cursor: pointer; border-top: 4px solid transparent; }
         .nav-item.active { color: var(--primary); font-weight: bold; border-top-color: var(--primary); background: #f8f9fa; }
@@ -40,12 +44,12 @@
         .btn-submit { width: 100%; background: var(--success); color: white; border: none; padding: 18px; border-radius: 10px; font-size: 20px; font-weight: bold; cursor: pointer; }
         .btn-search { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-size: 18px; margin-top: 10px; cursor: pointer; }
 
-        /* Loading & Toast */
+        /* Loading 遮罩 */
         #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); color: white; justify-content: center; align-items: center; flex-direction: column; z-index: 2000; backdrop-filter: blur(2px); }
     </style>
 </head>
 <body>
-    <div id="loading"><div style="font-size: 40px; animation: spin 1s infinite linear;">🔄</div><div style="margin-top:10px;">處理中...</div></div>
+    <div id="loading"><div style="font-size: 40px;">🔄</div><div style="margin-top:10px;">處理中...</div></div>
 
     <div id="page-report" class="page active">
         <div class="header">
@@ -57,8 +61,8 @@
             <div><span class="label">📦 料號 (Part)</span><input type="text" id="part" class="input-field" value="A-774"></div>
             <div><span class="label">🔖 批號 (Batch)</span><input type="text" id="batch" class="input-field" value="LOT-01"></div>
             
-            <div><span class="label">📥 進貨數量 (Target)</span><input type="number" id="target" class="input-field" value="500" style="background:#fffbe6;"></div>
-            <div><span class="label">🏭 庫存數量 (Stock)</span><input type="number" id="stock" class="input-field" value="1200" style="color:#0056b3;"></div>
+            <div><span class="label">📥 進貨數量</span><input type="number" id="target" class="input-field" value="500" style="background:#fffbe6;"></div>
+            <div><span class="label">🏭 庫存數量</span><input type="number" id="stock" class="input-field" value="1200" style="color:#0056b3;"></div>
         </div>
 
         <div class="card" style="text-align:center;">
@@ -114,9 +118,9 @@
 
     <script>
         // ==========================================
-        // ⚠️ 請將您的「新版本」網址貼在下方
+        // ⚠️ 請務必在此貼上您的 Google Apps Script 網址
         // ==========================================
-        const URL = "https://script.google.com/macros/s/AKfycbym1ulu27l_8gCThjYV6CbTUS8mv4CaXEGxCM-aNzO4aqNaghO1ib0XCnztCUOqCL0/exec"; 
+        const URL = "請在此處貼上您的網址"; 
         // ==========================================
 
         function updateClock() {
@@ -141,7 +145,7 @@
 
         function toggleLoad(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
 
-        // 提交資料 (寫入)
+        // 提交資料
         function submitData() {
             if(!URL || URL.includes("貼上")) return alert("請先設定 Google Script 網址！");
             
@@ -164,7 +168,7 @@
             }).catch(e => { toggleLoad(false); alert("寫入失敗，請檢查網路。"); });
         }
 
-        // 查詢資料 (讀取)
+        // 查詢資料
         function queryData() {
             if(!URL || URL.includes("貼上")) return alert("請先設定 Google Script 網址！");
             
@@ -175,9 +179,8 @@
             toggleLoad(true);
             document.getElementById('q-result').style.display = 'none';
 
-            // 組合查詢參數
+            // 組合查詢網址
             const queryURL = `${URL}?partNo=${encodeURIComponent(p)}&batchNo=${encodeURIComponent(b)}`;
-            console.log("Query URL:", queryURL); // 方便除錯
 
             fetch(queryURL)
             .then(response => {
@@ -192,11 +195,11 @@
                     document.getElementById('res-ect').innerText = data.ect;
                     document.getElementById('q-result').style.display = 'block';
                 } else {
-                    alert("❌ 找不到該料號的資料 (或是 Excel 中沒有該料號)");
+                    alert("❌ 找不到該料號的資料");
                 }
             }).catch(e => {
                 toggleLoad(false); 
-                alert("查詢失敗！\n1. 請確認後端是否已發布為「新版本」\n2. 請確認權限設為「所有人」\n錯誤訊息：" + e);
+                alert("查詢失敗！請確認 Google Script 已更新為「新版本」且權限為「所有人」。\n錯誤：" + e);
             });
         }
     </script>
